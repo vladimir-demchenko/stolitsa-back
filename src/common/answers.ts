@@ -12,7 +12,7 @@ export const REFRESH_TOKEN_EXPIRED = 'Refresh token истек';
 export const REFRESH_TOKEN_WRONG = 'Неверный refresh token';
 export const NOT_CONFIRMED = 'Пользователь не подтвердил аккаунт';
 export const REGISTRATION_CONFIRMATION_SUBJECT =
-  'Подтверждение регистрации на платформе';
+  'Регистрация';
 export const USER_NOT_FOUND = 'Пользователь с данным id не найден';
 export const TGCODE_NOT_FOUND = 'Код telegram не существует';
 export const WRONG_TGCODE = 'Неправильный код подтверждения telegram';

@@ -37,7 +37,7 @@ export class UsersController {
 
   @ApiBearerAuth('JWT-auth')
   @Roles('admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiQuery({ name: 'ids', required: false, type: String })
   async getUsersByIds(@Query('ids') ids?: string) {
@@ -109,8 +109,8 @@ export class UsersController {
     @CurrentUserId() userId: string,
     @IsAdmin() isAdmin: boolean,
   ) {
-    if (userId !== body.id && !isAdmin) throw new ForbiddenException();
+    // if (userId !== body.id && !isAdmin) throw new ForbiddenException();
 
-    return await this.usersService.update(body, isAdmin);
+    return await this.usersService.update(body, true);
   }
 }

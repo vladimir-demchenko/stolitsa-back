@@ -20,7 +20,15 @@ export class EmailService {
       to: to,
       subject: subject,
       text: text,
-      html: `<b>${text}</b>`,
+      html: `<p>
+      Привет!<br/>
+      Поздравляем! Ты зарегистрировался на сайте <a href="http://столица-лето.рф">http://столица-лето.рф</a><br/>  
+      Твой пароль для входа в личный кабинет: ${text}<br/>  
+      <br/>  
+      Доступ в личный кабинет откроется через 3 дня<br/>   
+      <br/>
+      Если у тебя возникнут вопросы, ты можешь их адресовать сюда <a href="https://t.me/STOlitsa_Leto" target="_blank">https://t.me/STOlitsa_Leto</a>
+      </p>`,
     };
     transporter.sendMail(message, (err, info) => {
       if (err) {

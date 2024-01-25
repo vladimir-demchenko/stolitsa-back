@@ -17,10 +17,10 @@ export class RolesService {
     return this.roleRepository.create(createRoleDto);
   }
 
-  // findAll(serviceId?: string) {
-  //   const where = serviceId ? { serviceId } : {};
-  //   return this.roleRepository.findAll({ where });
-  // }
+  findAll(serviceId?: string) {
+    const where = serviceId ? { serviceId } : {};
+    return this.roleRepository.findAll({ where });
+  }
 
   async findOne(id: string, transaction?: Transaction): Promise<Role> {
     const role = await this.roleRepository.findByPk(id, { transaction });

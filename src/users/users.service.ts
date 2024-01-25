@@ -19,11 +19,15 @@ import {
   WRONG_TGCODE,
   USER_NOT_FOUND,
   TGCODE_NOT_FOUND,
+  REGISTRATION_CONFIRMATION_SUBJECT,
 } from 'src/common/answers';
+import { generatePassword } from 'src/common';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class UsersService {
   constructor(
+    private readonly emailService: EmailService,
     @InjectModel(User) private userRepository: typeof User,
     @InjectModel(Role) private roleRepository: typeof Role,
     @InjectModel(UserRoles) private userRolesRepository: typeof UserRoles,
@@ -42,17 +46,26 @@ export class UsersService {
       if (loginExist) {
         throw new BadRequestException(LOGIN_EXISTS);
       } else {
+
         const newUser = await this.userRepository.create(createUserDto, {
           transaction,
         });
         const roles = await this.roleRepository.findAll({
           where: {
             name: {
-              [Op.or]: ['viewer', 'student'],
+              [Op.or]: ['user', 'student'],
             },
           },
           transaction,
         });
+
+        let res = null;
+
+        res = await this.emailService.sendEmail(createUserDto.login, createUserDto.password, REGISTRATION_CONFIRMATION_SUBJECT);
+
+        if (res !== true) {
+          throw new BadRequestException();
+        }
 
         await newUser.$add('roles', roles, { transaction });
         const user = await this.findOne(newUser.id, transaction);

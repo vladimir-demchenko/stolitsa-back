@@ -7,8 +7,8 @@ export class RegistrationDto {
   @MaxLength(255, { message: 'login more than 255 characters' })
   login: string;
 
-  @ApiProperty({ example: 'password', description: 'password' })
-  @IsString({ message: 'The password must be string type' })
+  // @ApiProperty({ example: 'password', description: 'password' })
+  // @IsString({ message: 'The password must be string type' })
 
   // FOR THE FUTURE
   // @MinLength(4, { message: 'The password less than 4 characters' })
@@ -17,7 +17,7 @@ export class RegistrationDto {
   //   message:
   //     'The password must contain at least 1 upper case letter, 1 lower case letter, 1 number or special character',
   // })
-  password: string;
+  // password: string;
 
   @ApiProperty({
     example: 'fdd2465f-c1ba-4219-b077-a74b01793c42',

@@ -34,6 +34,7 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize';
 import { ResetToken } from 'src/reset_token/entities/reset_token.entity';
 import { Role } from 'src/roles/entities/role.entity';
+import { generatePassword } from 'src/common';
 dotenv.config();
 const { REFRESH_TOKEN_LIFETIME, AUTH_SERVICE_URL } = process.env;
 
@@ -111,7 +112,8 @@ export class AuthService {
     if (loginExist) {
       throw new BadRequestException(LOGIN_EXISTS);
     }
-    const newUser = await this.usersService.create(registrationDto);
+    const password = generatePassword();
+    const newUser = await this.usersService.create({ ...registrationDto, password: password });
     return {
       uid: newUser.id,
       roles: newUser.roles,
