@@ -26,6 +26,8 @@ import { EmailService } from 'src/email/email.service';
 import { Shift } from 'src/shifts/entities/shift.entity';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 import { CreativeTaskDto } from './dto/creative-task.dto';
+import { UserShiftDto } from './dto/user-shfit.dto';
+import { UserApproveShift } from './dto/user-approve-shift.dto';
 
 @Injectable()
 export class UsersService {
@@ -104,7 +106,19 @@ export class UsersService {
         },
       };
     }
-    const users = await this.userRepository.findAll(optionsObject);
+    const users = await this.userRepository.findAll({
+      include: [
+        {
+          model: this.roleRepository,
+          attributes: ['name'],
+          through: { attributes: [] },
+        },
+        {
+          model: this.shiftRepository,
+          attributes: ['id', 'date', 'title', 'descriptions', 'expire_time', 'open_reg']
+        }
+      ],
+    });
     return users;
   }
 
@@ -247,6 +261,50 @@ export class UsersService {
 
       return JSON.stringify({
         message: 'Ссылка добавлена!',
+      });
+    } catch (error) {
+      await transaction.rollback();
+
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async userShift({ id, ...shift }: UserShiftDto) {
+    const transaction: Transaction = await this.sequelize.transaction();
+    try {
+      const user = await this.findOne(id, transaction);
+      user.shiftId = shift.shiftID;
+      await user.save();
+      await transaction.commit();
+
+      return JSON.stringify({
+        message: 'Смена добавлена!',
+      });
+    } catch (error) {
+      await transaction.rollback();
+
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async approveShift({ id, ...approve }: UserApproveShift) {
+    const transaction: Transaction = await this.sequelize.transaction();
+    try {
+      const user = await this.findOne(id, transaction);
+      user.approve_shift = approve.approve_shift;
+      await user.save();
+      await transaction.commit();
+
+      return JSON.stringify({
+        message: 'Смена подтверждена!',
       });
     } catch (error) {
       await transaction.rollback();

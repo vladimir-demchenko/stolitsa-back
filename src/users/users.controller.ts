@@ -23,6 +23,8 @@ import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { ParseUUIDPipe } from '@nestjs/common';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 import { CreativeTaskDto } from './dto/creative-task.dto';
+import { UserShiftDto } from './dto/user-shfit.dto';
+import { UserApproveShift } from './dto/user-approve-shift.dto';
 
 @ApiTags('users')
 @Controller('api/users')
@@ -128,5 +130,19 @@ export class UsersController {
   @Patch('/creative_task')
   async creativeTask(@CurrentUserId() id: string, @Body() body: CreativeTaskDto) {
     return await this.usersService.creativeTask(body);
+  }
+
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(JwtAuthGuard)
+  @Patch('/shift')
+  async userShift(@Body() body: UserShiftDto) {
+    return await this.usersService.userShift(body);
+  }
+
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(JwtAuthGuard)
+  @Patch('/approve_shift')
+  async approveShift(@Body() body: UserApproveShift) {
+    return await this.usersService.approveShift(body);
   }
 }
