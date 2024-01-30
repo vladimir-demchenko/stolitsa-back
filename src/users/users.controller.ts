@@ -21,9 +21,11 @@ import { User } from './entities';
 import { UserEduRoles } from 'src/common';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { ParseUUIDPipe } from '@nestjs/common';
+import { UpdateUserInfoDto } from './dto/update-user-info.dto';
+import { CreativeTaskDto } from './dto/creative-task.dto';
 
 @ApiTags('users')
-@Controller('users')
+@Controller('api/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
@@ -112,5 +114,19 @@ export class UsersController {
     // if (userId !== body.id && !isAdmin) throw new ForbiddenException();
 
     return await this.usersService.update(body, true);
+  }
+
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(JwtAuthGuard)
+  @Patch('/info')
+  async updateInfo(@Body() body: UpdateUserInfoDto) {
+    return await this.usersService.updateInfo(body);
+  }
+
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(JwtAuthGuard)
+  @Patch('/creative_task')
+  async creativeTask(@CurrentUserId() id: string, @Body() body: CreativeTaskDto) {
+    return await this.usersService.creativeTask(body);
   }
 }

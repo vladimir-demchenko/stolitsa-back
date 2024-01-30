@@ -14,21 +14,13 @@ const transporter = nodemailer.createTransport({
 @Injectable()
 export class EmailService {
   constructor() { }
-  async sendEmail(to, text, subject) {
+  async sendEmail(to, text, subject, html) {
     const message = {
       from: 'Дирекция STOлица.Лето <stolitsaleto@anogn.ru>',
       to: to,
       subject: subject,
       text: text,
-      html: `<p>
-      Привет!<br/>
-      Поздравляем! Ты зарегистрировался на сайте <a href="http://столица-лето.рф">http://столица-лето.рф</a><br/>  
-      Твой пароль для входа в личный кабинет: ${text}<br/>  
-      <br/>  
-      Доступ в личный кабинет откроется через 3 дня<br/>   
-      <br/>
-      Если у тебя возникнут вопросы, ты можешь их адресовать сюда <a href="https://t.me/STOlitsa_Leto" target="_blank">https://t.me/STOlitsa_Leto</a>
-      </p>`,
+      html: html,
     };
     transporter.sendMail(message, (err, info) => {
       if (err) {

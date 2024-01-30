@@ -1,9 +1,10 @@
-import { BelongsToMany, Column, DataType, Model, Table } from 'sequelize-typescript';
+import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasOne, Model, Table } from 'sequelize-typescript';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { Role } from 'src/roles/entities/role.entity';
 import { UserRoles } from './user-roles.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { generatePassword, hashPassword } from 'src/common';
+import { Shift } from 'src/shifts/entities/shift.entity';
 
 
 @Table({
@@ -75,6 +76,127 @@ export class User extends Model<User, CreateUserDto> {
     allowNull: true
   })
   birthday: Date;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  citizenship: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  avatar_key: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true
+  })
+  passport_number: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true
+  })
+  passport_series: number;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  actual_living: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  registration_living: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  place_of_work: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  position: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  tg_name: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  vk_link: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  phone: string;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true
+  })
+  illness: string;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true
+  })
+  find_out: string;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true
+  })
+  future_skills: string;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true
+  })
+  about_yourself: string;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true
+  })
+  take_part: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  creative_task: string;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false
+  })
+  approve_shift: boolean;
+
+  @ForeignKey(() => Shift)
+  @ApiProperty({ description: 'shfitId', nullable: true })
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  shiftId: string;
+
+  @BelongsTo(() => Shift)
+  shift: Shift;
+
 
   @BelongsToMany(() => Role, () => UserRoles)
   roles: Role[];

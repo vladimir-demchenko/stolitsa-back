@@ -17,7 +17,7 @@ import { Roles } from 'src/common';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('roles')
-@Controller('roles')
+@Controller('api/roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) { }
 
@@ -29,15 +29,13 @@ export class RolesController {
     return this.rolesService.create(createRoleDto);
   }
 
-  // @ApiBearerAuth('JWT-auth')
-  // @Roles('admin')
-  // @UseGuards(RolesGuard)
-  // @ApiQuery({ type: String, required: false })
-  // @Get()
-  // findAll(@Query('serviceId') serviceId: string) {
-  //   console.log(serviceId);
-  //   return this.rolesService.findAll(serviceId);
-  // }
+  @ApiBearerAuth('JWT-auth')
+  @Roles('admin')
+  @UseGuards(RolesGuard)
+  @Get()
+  findAll() {
+    return this.rolesService.findAll();
+  }
 
   @ApiBearerAuth('JWT-auth')
   @Roles('admin')

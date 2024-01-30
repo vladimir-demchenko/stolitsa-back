@@ -9,6 +9,10 @@ import { Dialect } from 'sequelize';
 import * as dotenv from 'dotenv';
 import { EmailModule } from 'src/email/email.module';
 import { ResetTokenModule } from 'src/reset_token/reset_token.module';
+import { ShiftsModule } from './shifts/shifts.module';
+import { FAQsModule } from './faqs/faqs.module';
+import { FilesModule } from './files/files.module';
+import { BlocksModule } from './blocks/blocks.module';
 
 dotenv.config();
 
@@ -43,6 +47,10 @@ const { DB_DIALECT, DB_PORT, DB_PASS, DB_USER, DB_NAME } = process.env;
     RolesModule,
     ResetTokenModule,
     EmailModule,
+    ShiftsModule,
+    FAQsModule,
+    FilesModule,
+    BlocksModule
   ],
   controllers: [],
   providers: [

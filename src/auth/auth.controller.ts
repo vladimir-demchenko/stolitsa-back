@@ -8,7 +8,7 @@ import { ForgotPasswordDto } from 'src/auth/dto/forgot-password.dto';
 import { RestorePasswordDto } from 'src/auth/dto/restore-password.dto';
 
 @ApiTags('auth')
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 

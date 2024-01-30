@@ -23,6 +23,9 @@ import {
 } from 'src/common/answers';
 import { generatePassword } from 'src/common';
 import { EmailService } from 'src/email/email.service';
+import { Shift } from 'src/shifts/entities/shift.entity';
+import { UpdateUserInfoDto } from './dto/update-user-info.dto';
+import { CreativeTaskDto } from './dto/creative-task.dto';
 
 @Injectable()
 export class UsersService {
@@ -30,6 +33,7 @@ export class UsersService {
     private readonly emailService: EmailService,
     @InjectModel(User) private userRepository: typeof User,
     @InjectModel(Role) private roleRepository: typeof Role,
+    @InjectModel(Shift) private shiftRepository: typeof Shift,
     @InjectModel(UserRoles) private userRolesRepository: typeof UserRoles,
     @InjectConnection()
     private readonly sequelize: Sequelize,
@@ -37,7 +41,6 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const transaction: Transaction = await this.sequelize.transaction();
-
     try {
       const loginExist = await this.isLoginExist(
         createUserDto.login,
@@ -61,7 +64,15 @@ export class UsersService {
 
         let res = null;
 
-        res = await this.emailService.sendEmail(createUserDto.login, createUserDto.password, REGISTRATION_CONFIRMATION_SUBJECT);
+        res = await this.emailService.sendEmail(createUserDto.login, createUserDto.password, REGISTRATION_CONFIRMATION_SUBJECT, `<p>
+        Привет!<br/>
+        Поздравляем! Ты зарегистрировался на сайте <a href="http://столица-лето.рф">http://столица-лето.рф</a><br/>  
+        Твой пароль для входа в личный кабинет: ${createUserDto.password}<br/>  
+        <br/>  
+        Доступ в личный кабинет откроется через 3 дня<br/>   
+        <br/>
+        Если у тебя возникнут вопросы, ты можешь их адресовать сюда <a href="https://t.me/STOlitsa_Leto" target="_blank">https://t.me/STOlitsa_Leto</a>
+        </p>`);
 
         if (res !== true) {
           throw new BadRequestException();
@@ -105,6 +116,10 @@ export class UsersService {
           attributes: ['name'],
           through: { attributes: [] },
         },
+        {
+          model: this.shiftRepository,
+          attributes: ['id', 'date', 'title', 'descriptions', 'expire_time', 'open_reg']
+        }
       ],
       transaction,
     });
@@ -161,6 +176,7 @@ export class UsersService {
     {
       id,
       roles: setRoles,
+      shift: setShift,
       ...fieldsForUpdate
     }: UpdateUserDto,
     isAdmin: boolean,
@@ -180,10 +196,58 @@ export class UsersService {
           await user.$set('roles', roles, { transaction });
         }
       }
+      if (setShift) {
+        const shift = await this.shiftRepository.findByPk(setShift.id, { transaction });
+        await user.$set('shift', shift, { transaction });
+      }
       const updatedUser = await user.reload({ transaction });
       await transaction.commit();
 
       return updatedUser;
+    } catch (error) {
+      await transaction.rollback();
+
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async updateInfo({ id, ...fieldsForUpdate }: UpdateUserInfoDto) {
+    const transaction: Transaction = await this.sequelize.transaction();
+
+    try {
+      const user = await this.findOne(id, transaction);
+
+      await user.update(fieldsForUpdate, { transaction });
+      const updatedUser = await user.reload({ transaction });
+      await transaction.commit();
+
+      return updatedUser;
+    } catch (error) {
+      await transaction.rollback();
+
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async creativeTask({ id, ...link }: CreativeTaskDto) {
+    const transaction: Transaction = await this.sequelize.transaction();
+    try {
+      const user = await this.findOne(id, transaction);
+      user.creative_task = link.creative_task;
+      await user.save();
+      await transaction.commit();
+
+      return JSON.stringify({
+        message: 'Ссылка добавлена!',
+      });
     } catch (error) {
       await transaction.rollback();
 

@@ -1,6 +1,7 @@
 import { Role } from 'src/roles/entities/role.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsUUID, IsString, IsOptional } from 'class-validator';
+import { Shift } from 'src/shifts/entities/shift.entity';
 
 export class UpdateUserDto {
   @ApiProperty({
@@ -27,6 +28,13 @@ export class UpdateUserDto {
   })
   @IsOptional()
   roles?: [Role];
+
+  @ApiProperty({
+    required: false,
+    type: () => Shift,
+  })
+  @IsOptional()
+  shift?: Shift;
 
   @ApiProperty({
     description: 'firstname',

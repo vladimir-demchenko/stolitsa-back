@@ -133,31 +133,19 @@ export class AuthService {
       forgotPasswordDto.email,
     );
     if (user) {
-      const password_token = await this.resetTokenRepository.findOne({
-        where: { userId: user.id },
-      });
-      const now = new Date();
-      if (password_token != null) {
-        const lastTryDate = new Date(password_token.updatedAt);
-        const diffInMilliseconds = now.getTime() - lastTryDate.getTime();
-        const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
-        if (diffInMinutes < 10) {
-          return JSON.stringify({
-            message: CODE_SENT,
-          });
-        }
-      }
-      const token = uuid();
-      await this.resetTokenRepository.create({
-        userId: user.id,
-        to: user.login,
-        token: token,
-      });
+      const password = generatePassword();
+      user.password = password;
+      await user.save();
 
       await this.emailService.sendEmail(
         user.login,
-        `https://aib-broker.ru/reset_password/?token=${token}`,
+        password,
         PASSWORD_RESTORATION_SUBJECT,
+        `Привет! 
+        <br/>
+        Твой пароль для входа в личный кабинет на сайте http://столица-лето.рф: <b>${password}</b>
+        <br/>
+        Если у тебя возникнут вопросы, ты можешь их адресовать сюда https://t.me/STOlitsa_Leto`
       );
 
       return JSON.stringify({

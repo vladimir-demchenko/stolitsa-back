@@ -36,7 +36,7 @@ export class RolesService {
     try {
       const role = await this.findOne(id, transaction);
       await role.update(updateRoleDto, { transaction });
-      const updatedRole = role.reload({ transaction });
+      const updatedRole = await role.reload({ transaction });
 
       await transaction.commit();
 
