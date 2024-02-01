@@ -52,6 +52,14 @@ export class UpdateUserInfoDto {
   passport_series?: number;
 
   @ApiProperty({
+    description: 'sex',
+    type: 'string',
+    required: false,
+  })
+  @IsOptional()
+  sex?: string;
+
+  @ApiProperty({
     description: 'place_of_birth',
     type: 'string',
     required: false,

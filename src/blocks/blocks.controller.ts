@@ -18,9 +18,6 @@ export class BlocksController {
     return this.blocksService.create(createBlockDto);
   }
 
-  @ApiBearerAuth('JWT-auth')
-  @Roles('admin')
-  @UseGuards(RolesGuard)
   @Get()
   findAll() {
     return this.blocksService.findAll();

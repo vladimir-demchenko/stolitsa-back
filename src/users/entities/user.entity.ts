@@ -81,6 +81,18 @@ export class User extends Model<User, CreateUserDto> {
     type: DataType.STRING,
     allowNull: true
   })
+  place_of_birth: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  sex: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
   citizenship: string;
 
   @Column({
