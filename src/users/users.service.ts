@@ -277,7 +277,14 @@ export class UsersService {
     const transaction: Transaction = await this.sequelize.transaction();
     try {
       const user = await this.findOne(id, transaction);
+
+      if (user.approve_shift) {
+        await transaction.rollback();
+        return new BadRequestException('Нельзя изменить смену после подтверждения!')
+      }
+
       user.shiftId = shift.shiftID;
+
       await user.save();
       await transaction.commit();
 
@@ -301,6 +308,22 @@ export class UsersService {
       const user = await this.findOne(id, transaction);
       user.approve_shift = approve.approve_shift;
       await user.save();
+
+      let res = null;
+
+      res = await this.emailService.sendEmail(user.login, user.login, 'Подтверждение заявки', `<p>
+        Поздравляем! Ты заполнил свою анкету и стал потенциальным участником молодёжного палаточного патриотического слёта «STOлица.Лето»!<br/>
+        <br/>
+        Нам необходимо проверить твою заявку. Результаты отбора будут объявлены после окончания сбора заявок участников. Следи за обновлениями на почте. 
+        Мы обязательно свяжемся с тобой! <br/>
+        <br/>
+        Если у тебя возникнут вопросы, ты можешь адресовать их сюда https://t.me/STOlitsa_Leto`);
+
+      if (res !== true) {
+        await transaction.rollback();
+        throw new BadRequestException();
+      }
+
       await transaction.commit();
 
       return JSON.stringify({
