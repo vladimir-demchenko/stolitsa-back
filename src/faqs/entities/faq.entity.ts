@@ -5,11 +5,6 @@ import { FAQDto } from '../dto/faq.dto';
 
 @Table({
   tableName: 'faqs',
-  defaultScope: {
-    attributes: {
-      exclude: ['createdAt', 'updatedAt', 'deletedAt']
-    }
-  }
 })
 export class FAQ extends Model<FAQ, FAQDto> {
   @ApiProperty({

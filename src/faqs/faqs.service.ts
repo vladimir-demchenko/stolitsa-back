@@ -17,7 +17,9 @@ export class FAQsService {
   }
 
   findAll() {
-    return this.faqRepository.findAll();
+    return this.faqRepository.findAll({
+      order: [['createdAt', 'ASC']]
+    });
   }
 
   async findOne(id: string, transaction?: Transaction): Promise<FAQ> {

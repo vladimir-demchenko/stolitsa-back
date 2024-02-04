@@ -17,7 +17,9 @@ export class ShiftsService {
   }
 
   findAll() {
-    return this.shiftRepository.findAll();
+    return this.shiftRepository.findAll({
+      order: [['createdAt', 'ASC']]
+    });
   }
 
   async findOne(id: string, transaction?: Transaction): Promise<Shift> {

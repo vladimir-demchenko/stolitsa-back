@@ -8,11 +8,6 @@ import { Block } from 'src/blocks/entities/block.entity';
 
 @Table({
   tableName: 'shifts',
-  defaultScope: {
-    attributes: {
-      exclude: ['createdAt', 'updatedAt', 'deletedAt']
-    }
-  }
 })
 export class Shift extends Model<Shift, CreateShiftDto> {
   @ApiProperty({
