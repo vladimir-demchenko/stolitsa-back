@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { getEduUsersDto } from './dto/get-users.dto';
+import { getUsersDto } from './dto/get-users.dto';
 import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { User } from './entities/user.entity';
 import { Role } from 'src/roles/entities/role.entity';
@@ -94,18 +94,51 @@ export class UsersService {
     }
   }
 
-  async getUsersByIds(ids: string): Promise<User[]> {
-    let optionsObject = {};
-    if (ids != null) {
-      const ids_array = ids.split(',');
-      optionsObject = {
-        where: {
-          id: {
-            [Op.in]: ids_array,
-          },
-        },
-      };
+  async getUsersByIds(getUsersDto: getUsersDto): Promise<User[]> {
+    let whereObject = [];
+
+    if (getUsersDto.email) {
+      whereObject.push(
+        sequelize.where(
+          Sequelize.col('login'), {
+          [Op.like]: `%${getUsersDto.email}%`
+        }
+        ),
+      );
     }
+
+    if (getUsersDto.name) {
+      whereObject.push(
+        sequelize.where(
+          Sequelize.fn(
+            'concat',
+            Sequelize.col('lastname'),
+            Sequelize.col('firstname'),
+            Sequelize.col('secondname')
+          ),
+          {
+            [Op.iLike]: `%${getUsersDto.name}%`
+          },
+        ),
+      );
+    }
+
+    if (getUsersDto.approve_shift) {
+      whereObject.push(
+        sequelize.where(Sequelize.col('approve_shift'), {
+          [Op.is]: getUsersDto.approve_shift === 'true' ? true : false
+        }),
+      );
+    }
+
+    if (getUsersDto.shiftId) {
+      whereObject.push(
+        sequelize.where(Sequelize.col('shiftId'), {
+          [Op.eq]: `${getUsersDto.shiftId}`
+        }),
+      );
+    }
+
     const users = await this.userRepository.findAll({
       include: [
         {
@@ -118,6 +151,7 @@ export class UsersService {
           attributes: ['id', 'date', 'title', 'descriptions', 'expire_time', 'open_reg']
         }
       ],
+      where: whereObject
     });
     return users;
   }
@@ -356,75 +390,75 @@ export class UsersService {
     }
   }
 
-  async getUsers(getUsersDto: getEduUsersDto) {
-    const whereObject = [];
+  // async getUsers(getUsersDto: getEduUsersDto) {
+  //   const whereObject = [];
 
-    if (getUsersDto.name) {
-      whereObject.push(
-        sequelize.where(
-          Sequelize.fn(
-            'concat',
-            Sequelize.col('firstname'),
-            Sequelize.col('surname'),
-            Sequelize.col('lastname'),
-          ),
-          {
-            [Op.iLike]: `%${getUsersDto.name}%`,
-          },
-        ),
-      );
-    }
+  //   if (getUsersDto.name) {
+  //     whereObject.push(
+  //       sequelize.where(
+  //         Sequelize.fn(
+  //           'concat',
+  //           Sequelize.col('firstname'),
+  //           Sequelize.col('surname'),
+  //           Sequelize.col('lastname'),
+  //         ),
+  //         {
+  //           [Op.iLike]: `%${getUsersDto.name}%`,
+  //         },
+  //       ),
+  //     );
+  //   }
 
-    if (getUsersDto.phone) {
-      whereObject.push(
-        sequelize.where(Sequelize.col('phone'), {
-          [Op.like]: `%${getUsersDto.phone}%`,
-        }),
-      );
-    }
+  //   if (getUsersDto.phone) {
+  //     whereObject.push(
+  //       sequelize.where(Sequelize.col('phone'), {
+  //         [Op.like]: `%${getUsersDto.phone}%`,
+  //       }),
+  //     );
+  //   }
 
-    if (getUsersDto.telegram) {
-      whereObject.push(
-        sequelize.where(Sequelize.col('tg_name'), {
-          [Op.like]: `%${getUsersDto.telegram}%`,
-        }),
-      );
-    }
+  //   if (getUsersDto.telegram) {
+  //     whereObject.push(
+  //       sequelize.where(Sequelize.col('tg_name'), {
+  //         [Op.like]: `%${getUsersDto.telegram}%`,
+  //       }),
+  //     );
+  //   }
 
-    if (getUsersDto.email) {
-      whereObject.push(
-        sequelize.where(Sequelize.col('login'), {
-          [Op.like]: `%${getUsersDto.email}%`,
-        }),
-      );
-    }
+  //   if (getUsersDto.email) {
+  //     whereObject.push(
+  //       sequelize.where(Sequelize.col('login'), {
+  //         [Op.like]: `%${getUsersDto.email}%`,
+  //       }),
+  //     );
+  //   }
 
-    if (getUsersDto.ids) {
-      const ids_array = getUsersDto.ids.split(',');
-      whereObject.push(
-        sequelize.where(Sequelize.col('id'), {
-          [Op.in]: ids_array,
-        }),
-      );
-    }
+  //   if (getUsersDto.ids) {
+  //     const ids_array = getUsersDto.ids.split(',');
+  //     whereObject.push(
+  //       sequelize.where(Sequelize.col('id'), {
+  //         [Op.in]: ids_array,
+  //       }),
+  //     );
+  //   }
 
-    const optionsObject: Omit<sequelize.FindAndCountOptions<User>, 'group'> = {
-      order: [['updatedAt', 'DESC']],
-      where: whereObject,
-      attributes: {
-        exclude: ['confirmId', 'confirmed', 'resetTokenId', 'company'],
-      },
-    };
+  //   const optionsObject: Omit<sequelize.FindAndCountOptions<User>, 'group'> = {
+  //     order: [['updatedAt', 'DESC']],
+  //     where: whereObject,
+  //     attributes: {
+  //       exclude: ['confirmId', 'confirmed', 'resetTokenId', 'company'],
+  //     },
+  //   };
 
-    if (getUsersDto.page) {
-      optionsObject['limit'] = 8;
-      optionsObject['offset'] = (getUsersDto.page - 1) * 8;
-    }
+  //   if (getUsersDto.page) {
+  //     optionsObject['limit'] = 8;
+  //     optionsObject['offset'] = (getUsersDto.page - 1) * 8;
+  //   }
 
-    const users = await this.userRepository.findAndCountAll(optionsObject);
+  //   const users = await this.userRepository.findAndCountAll(optionsObject);
 
-    return users;
-  }
+  //   return users;
+  // }
 
   async getUserBylogin(login: string): Promise<User> {
     return await this.userRepository.scope('withPassword').findOne({

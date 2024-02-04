@@ -16,7 +16,7 @@ import {
 async function bootstrap() {
   generateKeys();
 
-  const fastifyAdapter = new FastifyAdapter({ bodyLimit: 26214400 });
+  const fastifyAdapter = new FastifyAdapter({ bodyLimit: 40050830 });
 
   // Setting multipart
   fastifyAdapter.register(fastifyMultipart, {

@@ -13,7 +13,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { getEduUsersDto } from './dto/get-users.dto';
+import { getUsersDto } from './dto/get-users.dto';
 import { ApiBearerAuth, ApiQuery, ApiTags, ApiBody } from '@nestjs/swagger';
 import { CurrentUserId, Roles, IsAdmin } from 'src/common';
 import { RolesGuard, JwtAuthGuard } from 'src/auth/guards';
@@ -43,9 +43,8 @@ export class UsersController {
   @Roles('admin')
   @UseGuards(JwtAuthGuard)
   @Get()
-  @ApiQuery({ name: 'ids', required: false, type: String })
-  async getUsersByIds(@Query('ids') ids?: string) {
-    return await this.usersService.getUsersByIds(ids);
+  async getUsersByIds(@Query() getUsersDto: getUsersDto) {
+    return await this.usersService.getUsersByIds(getUsersDto);
   }
 
   @ApiBearerAuth('JWT-auth')
@@ -88,22 +87,22 @@ export class UsersController {
     return await this.usersService.findEduUsersData(ids);
   }
 
-  @Roles('admin')
-  @UseGuards(RolesGuard)
-  @ApiBearerAuth('JWT-auth')
-  @Get('/findEduUser')
-  async getUsers(
-    @UserEduRoles() userRoles: Array<string>,
-    @Query() getUsersDto: getEduUsersDto,
-  ): Promise<{
-    rows: User[];
-    count: number;
-  }> {
-    if (!userRoles.includes('admin')) {
-      throw new UnauthorizedException();
-    }
-    return await this.usersService.getUsers(getUsersDto);
-  }
+  // @Roles('admin')
+  // @UseGuards(RolesGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @Get('/findEduUser')
+  // async getUsers(
+  //   @UserEduRoles() userRoles: Array<string>,
+  //   @Query() getUsersDto: getEduUsersDto,
+  // ): Promise<{
+  //   rows: User[];
+  //   count: number;
+  // }> {
+  //   if (!userRoles.includes('admin')) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   return await this.usersService.getUsers(getUsersDto);
+  // }
 
   @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
