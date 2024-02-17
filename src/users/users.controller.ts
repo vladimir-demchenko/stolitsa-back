@@ -144,4 +144,12 @@ export class UsersController {
   async approveShift(@Body() body: UserApproveShift) {
     return await this.usersService.approveShift(body);
   }
+
+  @ApiBearerAuth('JWT-auth')
+  @Roles('admin')
+  @UseGuards(RolesGuard)
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(id);
+  }
 }

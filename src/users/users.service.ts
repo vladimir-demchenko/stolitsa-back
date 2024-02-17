@@ -139,6 +139,14 @@ export class UsersService {
       );
     }
 
+    if (getUsersDto.flag) {
+      whereObject.push(
+        sequelize.where(Sequelize.col('flag'), {
+          [Op.is]: getUsersDto.flag === 'true' ? true : false
+        }),
+      );
+    }
+
     const users = await this.userRepository.findAll({
       include: [
         {
@@ -382,7 +390,7 @@ export class UsersService {
 
       await transaction.commit();
 
-      return { removed: id };
+      return { removed: id, name: `${user.lastname} ${user.firstname}` };
     } catch (error) {
       await transaction.rollback();
 

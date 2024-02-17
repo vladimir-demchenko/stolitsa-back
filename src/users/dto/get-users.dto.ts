@@ -14,4 +14,7 @@ export class getUsersDto {
   @ApiPropertyOptional({ description: 'shiftId', nullable: true })
   @IsOptional()
   shiftId: string;
+  @ApiPropertyOptional({ description: 'flag', nullable: true })
+  @IsOptional()
+  flag: string;
 }

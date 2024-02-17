@@ -23,9 +23,11 @@ export class BlocksService {
       include: [
         {
           model: this.shiftRepository,
-          attributes: ['id', 'date', 'title', 'descriptions', 'expire_time', 'open_reg']
+          as: 'shifts',
+          attributes: ['id', 'date', 'title', 'descriptions', 'expire_time', 'open_reg', 'createdAt']
         }
-      ]
+      ],
+      order: [[{ model: this.shiftRepository, as: 'shifts' }, 'createdAt', 'ASC']]
     });
   }
 
@@ -34,7 +36,9 @@ export class BlocksService {
       include: [
         {
           model: this.shiftRepository,
-          attributes: ['id', 'date', 'title', 'descriptions', 'expire_time', 'open_reg']
+          as: 'shifts',
+          order: [['createdAt', 'ASC']],
+          attributes: ['id', 'date', 'title', 'descriptions', 'expire_time', 'open_reg', 'createdAt']
         }
       ], transaction
     });

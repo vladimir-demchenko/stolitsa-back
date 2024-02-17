@@ -67,4 +67,12 @@ export class UpdateUserDto {
   })
   @IsOptional()
   phone?: string;
+
+  @ApiProperty({
+    description: 'flag',
+    type: 'boolean',
+    required: false,
+  })
+  @IsOptional()
+  flag?: boolean;
 }

@@ -102,16 +102,16 @@ export class User extends Model<User, CreateUserDto> {
   avatar_key: string;
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.STRING,
     allowNull: true
   })
-  passport_number: number;
+  passport_number: string;
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.STRING,
     allowNull: true
   })
-  passport_series: number;
+  passport_series: string;
 
   @Column({
     type: DataType.STRING,
@@ -197,6 +197,13 @@ export class User extends Model<User, CreateUserDto> {
     defaultValue: false
   })
   approve_shift: boolean;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false
+  })
+  flag: boolean;
 
   @ForeignKey(() => Shift)
   @ApiProperty({ description: 'shfitId', nullable: true })

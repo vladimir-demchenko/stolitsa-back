@@ -37,19 +37,19 @@ export class UpdateUserInfoDto {
 
   @ApiProperty({
     description: 'passport_number',
-    type: 'number',
+    type: 'string',
     required: false,
   })
   @IsOptional()
-  passport_number?: number;
+  passport_number?: string;
 
   @ApiProperty({
     description: 'passport_series',
-    type: 'number',
+    type: 'string',
     required: false,
   })
   @IsOptional()
-  passport_series?: number;
+  passport_series?: string;
 
   @ApiProperty({
     description: 'sex',
